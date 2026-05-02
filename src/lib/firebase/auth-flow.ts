@@ -29,10 +29,12 @@ export function firebaseAuthErrorMessage(code: string | undefined): string {
       return "Email sign-in is not enabled for this application.";
     case "auth/email-already-in-use":
       return "This email is already registered. Use Log in instead.";
+    case "auth/unauthorized-domain":
+      return "This domain is not allowed to sign in. In Firebase Console → Authentication → Settings → Authorized domains, add your deployed site URL (e.g. your-app.vercel.app).";
     case "auth/invalid-credential":
     case "auth/wrong-password":
     case "auth/user-not-found":
-      return "Wrong email or password, or no account found for this email. Try Forgot password or Sign up.";
+      return "Wrong email or password, or no account exists in this app's Firebase project. If login works locally but not on the live site, confirm hosting env vars use the same Firebase project as local and redeploy after changing them.";
     case "auth/invalid-email":
       return "Enter a valid email address.";
     case "auth/weak-password":
