@@ -1,5 +1,5 @@
 /**
- * Gender-based avatars from `/public` (SVG — tracked in repo).
+ * Gender-based avatars from `/public`: avatar1.jfif (male), avatar2.jfif (female).
  * Other / unknown uses neutral SVG on gradient.
  */
 
@@ -7,8 +7,8 @@ import Image from "next/image";
 
 /** Paths must match files in `public/`. */
 const AVATAR_BY_GENDER = {
-  male: "/avatar-male.svg",
-  female: "/avatar-female.svg",
+  male: "/avatar1.jfif",
+  female: "/avatar2.jfif",
 } as const;
 
 export type ProfileGenderAvatarProps = {
