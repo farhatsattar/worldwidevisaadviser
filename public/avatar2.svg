@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+  <defs>
+    <linearGradient id="a2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f9a8d4" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="url(#a2)" />
+  <path
+    d="M28 42c6-22 22-34 34-34s28 12 34 34c2 14 10 26 22 34-12 8-18 22-20 36H26c-2-14-8-28-20-36 12-8 18-20 22-34z"
+    fill="#ffffff"
+    fill-opacity="0.35"
+  />
+  <ellipse cx="50" cy="40" rx="20" ry="23" fill="#ffffff" fill-opacity="0.96" />
+  <path
+    d="M50 58c-12 0-22 7-28 18h56c-6-11-16-18-28-18z"
+    fill="#ffffff"
+    fill-opacity="0.96"
+  />
+</svg>

@@ -1,14 +1,14 @@
 /**
- * Gender-based avatars from `/public`: avatar1.jfif (male), avatar2.jfif (female).
- * Other / unknown uses neutral SVG on gradient.
+ * Gender-based avatars from `/public`: avatar1 (male), avatar2 (female).
+ * Files live in repo so deploy gets them (JFIF often missing from git — SVG committed).
  */
 
 import Image from "next/image";
 
 /** Paths must match files in `public/`. */
 const AVATAR_BY_GENDER = {
-  male: "/avatar1.jfif",
-  female: "/avatar2.jfif",
+  male: "/avatar1.svg",
+  female: "/avatar2.svg",
 } as const;
 
 export type ProfileGenderAvatarProps = {
@@ -94,6 +94,7 @@ export function ProfileGenderAvatar({
           fill
           className="object-cover"
           sizes={imageSizesForAvatarSize(size)}
+          unoptimized
         />
         <span className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-t from-black/15 to-transparent" />
       </div>
