@@ -1,0 +1,206 @@
+rules_version = '2';
+
+/** Worldwide Visa Adviser — database security rules. */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----- Helpers -----
+
+    function appKeysOk() {
+      let d = request.resource.data;
+      return d.keys().hasAll([
+          'email',
+          'fullName',
+          'country',
+          'visaType',
+          'createdAt',
+        ])
+        && d.email is string
+        && d.email.size() >= 3
+        && d.email.size() <= 254
+        && d.fullName is string
+        && d.fullName.size() >= 1
+        && d.fullName.size() <= 200
+        && d.country is string
+        && d.country.size() >= 1
+        && d.country.size() <= 120
+        && d.visaType is string
+        && d.visaType.size() >= 1
+        && d.visaType.size() <= 120
+        && d.createdAt is timestamp
+        && (!('referralCode' in d)
+          || d.referralCode == null
+          || (d.referralCode is string && d.referralCode.size() <= 24))
+        && (!('username' in d)
+          || (d.username is string && d.username.size() <= 48));
+    }
+
+    function profileIdentityStable() {
+      return resource.data.referralCode == request.resource.data.referralCode
+        && resource.data.username == request.resource.data.username
+        && resource.data.parentReferralCode == request.resource.data.parentReferralCode;
+    }
+
+    /** Bounds referral/stat tampering per transaction (signup awards ≤ ~9 pts typical). */
+    function profilePointsDeltaReasonable() {
+      return request.resource.data.pointsTotal >= resource.data.pointsTotal - 25
+        && request.resource.data.pointsTotal <= resource.data.pointsTotal + 25
+        && request.resource.data.directReferralsCount
+          >= resource.data.directReferralsCount - 1
+        && request.resource.data.directReferralsCount
+          <= resource.data.directReferralsCount + 5;
+    }
+
+    /** Designated admin email (lowercase). Sync with app `admin-config` when changing. */
+    function isDesignatedAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "worldwidevisaadviser.com@gmail.com";
+    }
+
+    /** Referral signup chain: each write may touch points only, directs only, or both. */
+    function profileReferralChangedKeysOk() {
+      let k = request.resource.data.diff(resource.data).affectedKeys();
+      return k.hasOnly(['pointsTotal'])
+        || k.hasOnly(['directReferralsCount'])
+        || k.hasOnly(['pointsTotal', 'directReferralsCount']);
+    }
+
+    function profileReferralSelfServeUpdateOk() {
+      return profileIdentityStable()
+        && profilePointsDeltaReasonable()
+        && profileReferralChangedKeysOk();
+    }
+
+    /** Admin: verify / unverify (+ optional timestamp) and/or adjust pointsTotal. */
+    function profileAdminChangedKeysOk() {
+      let k = request.resource.data.diff(resource.data).affectedKeys();
+      return k.hasOnly(['pointsTotal'])
+        || k.hasOnly(['verified'])
+        || k.hasOnly(['verified', 'verifiedAt'])
+        || k.hasOnly(['verified', 'verifiedAt', 'pointsTotal'])
+        || k.hasOnly(['verified', 'pointsTotal']);
+    }
+
+    function profileAdminUpdateOk() {
+      return isDesignatedAdmin()
+        && profileIdentityStable()
+        && profileAdminChangedKeysOk()
+        && request.resource.data.pointsTotal >= resource.data.pointsTotal - 10000
+        && request.resource.data.pointsTotal <= resource.data.pointsTotal + 10000;
+    }
+
+    function profileCreateValid(code) {
+      let d = request.resource.data;
+      return d.referralCode is string
+        && d.referralCode == code
+        && d.username is string
+        && d.username.size() >= 1
+        && d.username.size() <= 48
+        && d.displayName is string
+        && d.displayName.size() >= 1
+        && d.displayName.size() <= 120
+        && (d.parentReferralCode == null
+          || (d.parentReferralCode is string && d.parentReferralCode.size() <= 24))
+        && d.pointsTotal is number
+        && d.pointsTotal >= 0
+        && d.pointsTotal <= 2000000
+        && d.verified is bool
+        && d.rank is string
+        && d.rank.size() <= 32
+        && d.directReferralsCount is number
+        && d.directReferralsCount >= 0
+        && d.directReferralsCount <= 2000000
+        && d.createdAt is timestamp
+        && (!('gender' in d)
+          || (d.gender is string && d.gender.size() >= 1 && d.gender.size() <= 24));
+    }
+
+    function receivedReferralCreateValid() {
+      let d = request.resource.data;
+      return d.keys().hasAll([
+          'inviteeEmail',
+          'inviteeName',
+          'inviteeReferralCode',
+          'verified',
+          'createdAt',
+        ])
+        && d.inviteeEmail is string
+        && d.inviteeEmail.size() >= 3
+        && d.inviteeEmail.size() <= 254
+        && d.inviteeName is string
+        && d.inviteeName.size() >= 1
+        && d.inviteeName.size() <= 200
+        && d.inviteeReferralCode is string
+        && d.inviteeReferralCode.size() >= 4
+        && d.inviteeReferralCode.size() <= 24
+        && d.verified is bool
+        && d.createdAt is timestamp
+        && (!('inviteeGender' in d)
+          || (d.inviteeGender is string
+              && d.inviteeGender.size() >= 1
+              && d.inviteeGender.size() <= 24));
+    }
+
+    // ----- Applications (audit log) -----
+
+    match /applications/{docId} {
+      allow create: if appKeysOk();
+      allow read, delete: if isDesignatedAdmin();
+      allow update: if false;
+    }
+
+    /** Signed-in user id → referral code for member dashboard login. */
+    match /authProfiles/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      allow create: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['referralCode'])
+        && request.resource.data.referralCode is string
+        && request.resource.data.referralCode.size() >= 4
+        && request.resource.data.referralCode.size() <= 24;
+
+      allow update, delete: if false;
+    }
+
+    // ----- Profiles & referrals -----
+
+    match /profiles/{referralCode} {
+      allow read: if true;
+
+      allow create: if profileCreateValid(referralCode);
+
+      allow update: if profileReferralSelfServeUpdateOk() || profileAdminUpdateOk();
+
+      allow delete: if false;
+
+      match /receivedReferrals/{rid} {
+        allow create: if receivedReferralCreateValid();
+        allow read: if true;
+        allow update, delete: if false;
+      }
+
+      /** Direct child in referral tree (parent → invitee). Doc id = child referral code. */
+      match /downline/{childCode} {
+        allow read: if true;
+
+        allow create: if request.resource.data.childReferralCode == childCode
+          && request.resource.data.displayName is string
+          && request.resource.data.displayName.size() >= 1
+          && request.resource.data.displayName.size() <= 200
+          && request.resource.data.inviteeEmail is string
+          && request.resource.data.inviteeEmail.size() >= 3
+          && request.resource.data.inviteeEmail.size() <= 254
+          && request.resource.data.createdAt is timestamp;
+
+        allow update, delete: if false;
+      }
+    }
+
+    // Deny everything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
