@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { FormInput } from "@/components/form";
 import { RegistrationApplicationFields } from "@/components/form/registration-application-fields";
@@ -37,7 +38,7 @@ export default function SignupPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-sky-50 via-white to-white px-5 py-12">
+        <div className="flex min-h-screen items-center justify-center wva-page-bg px-5 py-12">
           <div className="h-10 w-48 animate-pulse rounded-xl bg-slate-200" />
         </div>
       }
@@ -159,7 +160,7 @@ function SignupPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-white">
+    <div className="min-h-screen wva-page-bg">
       <Navbar
         items={[
           {
@@ -225,7 +226,7 @@ function SignupPageContent() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:from-blue-700 hover:to-sky-600 disabled:opacity-60"
+                  className="w-full rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 disabled:opacity-60"
                 >
                   Continue to registration
                 </button>
@@ -335,7 +336,7 @@ function SignupPageContent() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 px-8 py-3 text-sm font-semibold text-white shadow-md transition hover:from-blue-700 hover:to-sky-600 disabled:opacity-60"
+                    className="rounded-xl bg-slate-900 px-8 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 disabled:opacity-60"
                   >
                     {isSubmitting ? "Submitting…" : "Submit registration"}
                   </button>
@@ -383,6 +384,7 @@ function SignupPageContent() {
           ) : null}
         </Card>
       </main>
+      <SiteFooter />
     </div>
   );
 }

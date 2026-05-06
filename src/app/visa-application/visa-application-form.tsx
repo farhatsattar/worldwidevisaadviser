@@ -2,6 +2,8 @@
 
 import { type ChangeEvent, type FormEvent, useCallback, useState } from "react";
 import { FormInput } from "@/components/form";
+import { Navbar } from "@/components/navbar";
+import { SiteFooter } from "@/components/site-footer";
 import { RegistrationApplicationFields } from "@/components/form/registration-application-fields";
 import {
   initialRegistrationApplicationValues,
@@ -63,8 +65,25 @@ export function VisaApplicationForm() {
   const applicationErrors = errors;
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-4 font-[family-name:var(--font-inter)] sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen wva-page-bg font-[family-name:var(--font-inter)]">
+      <Navbar
+        items={[
+          { label: "Home", href: "/" },
+          {
+            label: "Leaderboard",
+            href: "/#leaders",
+            icon: "leaderboard",
+          },
+          {
+            label: "Dashboard",
+            href: "/dashboard",
+            icon: "dashboard",
+          },
+          { label: "Log in", href: "/login" },
+        ]}
+        signup={{ label: "Sign up", href: "/signup" }}
+      />
+      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <header className="mb-8 text-center sm:text-left">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
             Visa Application System
@@ -134,6 +153,7 @@ export function VisaApplicationForm() {
           </form>
         </div>
       </div>
+      <SiteFooter />
     </div>
   );
 }

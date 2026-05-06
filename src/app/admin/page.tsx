@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar";
+import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import { isAdminEmail } from "@/lib/admin-config";
 import {
@@ -251,7 +252,7 @@ export default function AdminPage() {
     !isAdminEmail(firebaseUser.email);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen wva-page-bg">
       <Navbar
         items={[
           { label: "Home", href: "/" },
@@ -533,6 +534,7 @@ export default function AdminPage() {
           </>
         ) : null}
       </main>
+      <SiteFooter />
     </div>
   );
 }

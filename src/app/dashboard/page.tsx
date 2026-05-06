@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
+import { SiteFooter } from "@/components/site-footer";
 import { ProfileGenderAvatar } from "@/components/profile-gender-avatar";
 import { Card } from "@/components/ui/card";
 import { signOutFirebase } from "@/lib/firebase/auth-flow";
@@ -253,7 +254,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen wva-page-bg">
       <Navbar
         items={[
           { label: "Home", href: "/" },
@@ -657,6 +658,7 @@ export default function DashboardPage() {
           </>
         ) : null}
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/navbar";
+import { SiteFooter } from "@/components/site-footer";
 import { Card } from "@/components/ui/card";
 import {
   firebaseAuthErrorMessage,
@@ -91,7 +92,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-white">
+    <div className="min-h-screen wva-page-bg">
       <Navbar
         items={[
           {
@@ -152,7 +153,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoggingIn || isSendingReset}
-              className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:from-blue-700 hover:to-sky-600 disabled:opacity-60"
+              className="w-full rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800 disabled:opacity-60"
             >
               {isLoggingIn ? "Signing in…" : "Log in"}
             </button>
@@ -180,6 +181,7 @@ export default function LoginPage() {
           </p>
         </Card>
       </main>
+      <SiteFooter />
     </div>
   );
 }
