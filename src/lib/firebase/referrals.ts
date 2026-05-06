@@ -3,8 +3,10 @@ export {
   submitRegistrationWithReferral,
   getReferralPointsForCode,
   fetchDashboardSnapshot,
+  fetchPublicMemberDashboard,
   fetchReferralSubtree,
   fetchVerifiedLeaderboard,
+  fetchPublicLeaders,
   adminListProfiles,
   adminListApplications,
   adminDeleteApplication,
@@ -17,4 +19,6 @@ export type {
   ReceivedReferralRow,
   ReferralTreeNode,
   VerifiedLeaderboardEntry,
+  PublicLeaderEntry,
+  PublicReferralHighlight,
 } from "./referral-profiles";

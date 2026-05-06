@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { SiteFooter } from "@/components/site-footer";
 import { ProfileGenderAvatar } from "@/components/profile-gender-avatar";
+import { PublicProfileAvatar } from "@/components/public-profile-avatar";
 import { Card } from "@/components/ui/card";
 import { signOutFirebase } from "@/lib/firebase/auth-flow";
 import {
@@ -77,6 +78,27 @@ function IconCopy({ className }: { className?: string }) {
   );
 }
 
+function IconUsers({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" />
+      <circle cx="9.5" cy="7" r="3" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a3 3 0 0 1 0 5.75" />
+    </svg>
+  );
+}
+
 function avatarInitials(displayName: string | undefined): string {
   const n = displayName?.trim();
   if (!n) return "U";
@@ -91,7 +113,8 @@ function ReferralTreeBranch({ node }: { node: ReferralTreeNode }) {
   return (
     <li className="py-1">
       <div className="flex items-start gap-2 text-sm">
-        <ProfileGenderAvatar
+        <PublicProfileAvatar
+          displayName={node.displayName}
           gender={node.gender}
           size="sm"
           className="mt-0.5 shrink-0"
@@ -307,160 +330,207 @@ export default function DashboardPage() {
 
         {showDashboard ? (
           <>
-            <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <Card className="bg-white">
-                <p className="text-sm font-medium text-slate-500">
-                  Verified referrals
-                </p>
-                <p className="mt-2 text-3xl font-bold text-slate-900">
-                  {loading ? "…" : verifiedCount}
-                </p>
-              </Card>
-              <Card className="bg-white">
-                <p className="text-sm font-medium text-slate-500">
-                  Unverified referrals
-                </p>
-                <p className="mt-2 text-3xl font-bold text-slate-900">
-                  {loading ? "…" : unverifiedCount}
-                </p>
-              </Card>
-              <Card className="bg-white">
-                <p className="text-sm font-medium text-slate-500">
-                  Direct referrals (total)
-                </p>
-                <p className="mt-2 text-3xl font-bold text-slate-900">
-                  {loading ? "…" : (profile?.directReferralsCount ?? 0)}
-                </p>
-              </Card>
-              <Card className="bg-white">
-                <p className="text-sm font-medium text-slate-500">Rank</p>
-                <p className="mt-2 text-xl font-bold text-slate-700">
-                  {loading ? "…" : rankTitle}
-                </p>
-                <p className="mt-2 text-xs leading-relaxed text-slate-500">
-                  Rank system: {RANK_SYSTEM_NAMES}
-                </p>
-              </Card>
-            </section>
-
-            <section className="mt-6">
-              <Card className="border-0 bg-gradient-to-r from-slate-700 to-slate-500 p-7 text-white shadow-lg md:p-10">
-                <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="flex flex-1 flex-col gap-6 md:flex-row md:items-center">
-                    <div className="relative shrink-0" aria-hidden>
+            <section
+              className="rounded-3xl bg-[#f5f7fb] p-4 shadow-sm md:p-6"
+              style={{ fontFamily: "Inter, Poppins, system-ui, sans-serif" }}
+            >
+              <Card className="border-0 bg-gradient-to-r from-blue-700 via-blue-600 to-sky-500 p-6 text-white shadow-[0_16px_38px_rgba(37,99,235,0.28)] md:p-8">
+                <div className="flex flex-col gap-7 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                    <div className="relative">
                       <ProfileGenderAvatar
                         gender={profile?.gender}
                         size="hero"
-                        className="ring-4 ring-white/60 shadow-2xl"
+                        className="ring-4 ring-white/70"
                       />
-                      <span className="absolute -bottom-1 -right-1 flex h-9 min-w-9 items-center justify-center rounded-full bg-white px-2 text-xs font-bold text-slate-800 shadow-lg ring-4 ring-slate-600/20">
-                        {initials}
-                      </span>
                     </div>
-                    <div className="text-left">
-                      <p className="flex items-center gap-1.5 text-sm text-slate-100">
-                        <IconUser className="h-4 w-4 opacity-90" />
-                        Profile
-                      </p>
-                      <h2 className="text-2xl font-semibold">
-                        {loading ? "Loading…" : profile?.displayName ?? "—"}
+                    <div>
+                      <h2 className="text-2xl font-bold md:text-3xl">
+                        {loading ? "Nadeem" : (profile?.displayName ?? "Nadeem")}
                       </h2>
-                      <p className="mt-1 text-sm text-slate-100">
-                        Username:{" "}
-                        <span className="font-medium text-white">
-                          @{profile?.username ?? "—"}
-                        </span>
+                      <p className="mt-1 text-sm text-blue-100">
+                        @{profile?.username ?? "nadeem"}
                       </p>
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="text-sm text-slate-100">
-                          Referral code:
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">
+                          Active
                         </span>
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 font-mono text-sm font-semibold text-white ring-1 ring-white/25">
+                        <span className="rounded-full bg-indigo-900/45 px-3 py-1 text-xs font-semibold">
+                          Top Leader
+                        </span>
+                      </div>
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-medium text-blue-100">Referral code:</span>
+                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/15 px-2.5 py-1 font-mono text-xs font-semibold text-white ring-1 ring-white/30">
                           {displayedReferralCode || "—"}
                           <button
                             type="button"
                             onClick={() => void copyReferralCode()}
                             disabled={!displayedReferralCode || loading}
-                            className="rounded-md p-1 text-white/90 transition hover:bg-white/20 hover:text-white disabled:opacity-40"
+                            className="rounded p-1 text-white/90 transition hover:bg-white/20 hover:text-white disabled:opacity-40"
                             aria-label={
-                              copiedReferralCode
-                                ? "Copied"
-                                : "Copy referral code"
+                              copiedReferralCode ? "Copied referral code" : "Copy referral code"
                             }
-                            title={
-                              copiedReferralCode
-                                ? "Copied!"
-                                : "Copy referral code"
-                            }
+                            title={copiedReferralCode ? "Copied!" : "Copy referral code"}
                           >
-                            <IconCopy className="h-4 w-4" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={openWhatsAppInvite}
-                            disabled={!displayedReferralCode || loading}
-                            className="rounded-md p-1 text-emerald-100 transition hover:bg-white/20 hover:text-white disabled:opacity-40"
-                            aria-label="Share invite link on WhatsApp"
-                            title="WhatsApp share"
-                          >
-                            <IconWhatsApp className="h-4 w-4" />
+                            <IconCopy className="h-3.5 w-3.5" />
                           </button>
                         </span>
                         {copiedReferralCode ? (
-                          <span className="text-xs font-medium text-emerald-200">
-                            Copied!
-                          </span>
+                          <span className="text-xs font-semibold text-emerald-200">Copied!</span>
                         ) : null}
                       </div>
-
-                      <p className="mt-2 text-xs text-slate-100/90">
-                        Verification:{" "}
-                        {profile?.verified ? (
-                          <span className="font-semibold text-emerald-200">
-                            Verified
-                          </span>
-                        ) : (
-                          <span className="font-semibold text-amber-200">
-                            Pending
-                          </span>
-                        )}
+                      <p className="mt-4 text-sm text-blue-100">
+                        Want to join using this member&apos;s referral?
                       </p>
+                      <button
+                        type="button"
+                        onClick={openWhatsAppInvite}
+                        className="mt-3 inline-flex items-center rounded-xl bg-emerald-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-emerald-600"
+                      >
+                        Contact on WhatsApp
+                      </button>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-6 lg:items-end lg:text-right">
-                    <div className="w-full max-w-md lg:ml-auto lg:text-right">
-                      <p className="text-sm text-slate-100">Ranking points</p>
-                      <p className="text-4xl font-extrabold tracking-tight md:text-5xl">
-                        {loading ? (
-                          "…"
-                        ) : (
-                          <>
-                            {rankingTowardCap}
-                            <span className="text-2xl font-semibold text-slate-100/90">
-                              {" "}
-                              / {MAX_REWARD_POINTS}
-                            </span>
-                          </>
-                        )}
-                      </p>
-                      <p className="mt-2 text-xs text-slate-100/85">
-                        Ranking scale: 0–{MAX_REWARD_POINTS} pts (see milestones
-                        below).
-                      </p>
-                      <p className="mt-3 text-xs font-medium uppercase tracking-wide text-slate-100">
-                        Progress (max {MAX_REWARD_POINTS})
-                      </p>
-                      <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/25">
-                        <div
-                          className="h-full rounded-full bg-white transition-all duration-500"
-                          style={{ width: `${rankingBarPct}%` }}
-                        />
-                      </div>
-                    </div>
+                  <div className="rounded-2xl bg-white/15 px-6 py-5 text-left backdrop-blur-sm lg:text-right">
+                    <p className="text-4xl font-extrabold leading-none md:text-5xl">
+                      {loading ? "…" : rankingTowardCap}{" "}
+                      <span className="text-2xl font-semibold text-blue-100">
+                        / {MAX_REWARD_POINTS}
+                      </span>
+                    </p>
+                    <p className="mt-2 text-sm font-medium text-blue-100">
+                      {Math.round(rankingBarPct)}% of maximum reached
+                    </p>
                   </div>
                 </div>
               </Card>
+
+              <div className="mt-7">
+                <Card className="rounded-2xl bg-white p-5 shadow-[0_10px_26px_rgba(15,23,42,0.08)]">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className="grid h-24 w-24 place-items-center rounded-full"
+                      style={{
+                        background:
+                          `conic-gradient(#2563eb 0deg, #2563eb ${Math.max(3, rankingBarPct * 3.6).toFixed(1)}deg, #e2e8f0 ${Math.max(3, rankingBarPct * 3.6).toFixed(1)}deg 360deg)`,
+                      }}
+                    >
+                      <div className="grid h-[76px] w-[76px] place-items-center rounded-full bg-white text-lg font-bold text-slate-800">
+                        {Math.round(rankingBarPct)}%
+                      </div>
+                    </div>
+                    <p className="mt-3 text-sm text-slate-500">
+                      Total Points: {loading ? "…" : rankingTowardCap}
+                    </p>
+                    <span className="mt-2 inline-flex rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700">
+                      {loading ? "…" : rankTitle}
+                    </span>
+
+                    <div className="mt-6 grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                      {[
+                        {
+                          title: "Domestic Tour",
+                          current: Math.min(rankingTowardCap, 20),
+                          total: 20,
+                          bar: "bg-blue-500",
+                        },
+                        {
+                          title: "International Tour",
+                          current: Math.min(rankingTowardCap, 52),
+                          total: 52,
+                          bar: "bg-blue-400",
+                        },
+                        {
+                          title: "Business Tour",
+                          current: Math.min(rankingTowardCap, 116),
+                          total: 116,
+                          bar: "bg-blue-300",
+                        },
+                        {
+                          title: "Business Opportunity",
+                          current: Math.min(rankingTowardCap, 200),
+                          total: 200,
+                          bar: "bg-blue-200",
+                        },
+                      ].map((item) => {
+                        const pct = Math.max(0, Math.min(100, (item.current / item.total) * 100));
+                        return (
+                          <div
+                            key={item.title}
+                            className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-left"
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="truncate text-xs font-semibold text-slate-700">{item.title}</p>
+                              <span className="text-[11px] font-semibold text-slate-500">
+                                {item.current}/{item.total}
+                              </span>
+                            </div>
+                            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${item.bar}`}
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </Card>
+
+                <div className="mt-6">
+                  <div className="mb-4 flex items-center justify-center gap-2">
+                    <IconUsers className="h-5 w-5 text-slate-500" />
+                    <h4 className="text-lg font-bold text-slate-900">Referrals Made</h4>
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {loading ? (
+                      Array.from({ length: 3 }).map((_, idx) => (
+                        <Card
+                          key={`ref-skeleton-${idx}`}
+                          className="rounded-2xl border border-slate-100 bg-white px-4 py-4 text-center shadow-[0_8px_18px_rgba(15,23,42,0.06)]"
+                        >
+                          <div className="mx-auto h-16 w-16 animate-pulse rounded-full bg-slate-200" />
+                          <div className="mx-auto mt-3 h-3 w-16 animate-pulse rounded bg-slate-100" />
+                          <div className="mx-auto mt-2 h-4 w-24 animate-pulse rounded bg-slate-200" />
+                          <div className="mx-auto mt-2 h-3 w-14 animate-pulse rounded bg-slate-100" />
+                        </Card>
+                      ))
+                    ) : referrals.length === 0 ? (
+                      <Card className="col-span-full rounded-2xl border border-slate-100 bg-white px-4 py-6 text-center shadow-[0_8px_18px_rgba(15,23,42,0.06)]">
+                        <p className="text-sm text-slate-500">
+                          No referrals yet for your referral code.
+                        </p>
+                      </Card>
+                    ) : (
+                      referrals.slice(0, 6).map((item) => (
+                        <Card
+                          key={item.id}
+                          className="rounded-2xl border border-slate-100 bg-white px-4 py-4 text-center shadow-[0_8px_18px_rgba(15,23,42,0.06)]"
+                        >
+                          <div className="mx-auto w-fit">
+                            <PublicProfileAvatar
+                              displayName={item.inviteeName || ""}
+                              gender={item.inviteeGender}
+                              size="nav"
+                              className="!ring-2 !ring-slate-100"
+                            />
+                          </div>
+                          <p className="mt-3 text-xs font-semibold text-emerald-600">
+                            {item.verified ? "Active" : "Pending"}
+                          </p>
+                          <p className="mt-1 text-sm font-bold text-slate-900">
+                            {item.inviteeName || "Member"}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">0 Points</p>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
             </section>
 
             <section className="mt-6">
@@ -498,163 +568,6 @@ export default function DashboardPage() {
               </Card>
             </section>
 
-            <section className="mt-6 grid gap-5 lg:grid-cols-2">
-              <Card className="bg-white text-left">
-                <h3 className="text-lg font-bold text-slate-900">
-                  Rewards system
-                </h3>
-                <ul className="mt-4 space-y-3">
-                  {REWARD_MILESTONES.map((m) => (
-                    <li
-                      key={m.points}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2 text-sm"
-                    >
-                      <span className="font-medium text-slate-800">{m.label}</span>
-                      <span
-                        className={
-                          effectivePoints >= m.points
-                            ? "font-semibold text-emerald-600"
-                            : "text-slate-500"
-                        }
-                      >
-                        {m.points} pts
-                        {effectivePoints >= m.points ? " ✓" : ""}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-
-              <Card className="bg-white text-left">
-                <h3 className="text-lg font-bold text-slate-900">
-                  Referral points (multi-level)
-                </h3>
-                <ul className="mt-4 list-inside list-disc space-y-2 text-sm text-slate-600">
-                  <li>Direct referral: {REFERRAL_POINTS_BY_DEPTH[0]} pts</li>
-                  <li>Second level: {REFERRAL_POINTS_BY_DEPTH[1]} pts</li>
-                  <li>Third level: {REFERRAL_POINTS_BY_DEPTH[2]} pts</li>
-                  <li>Fourth level: {REFERRAL_POINTS_BY_DEPTH[3]} pts</li>
-                </ul>
-                <p className="mt-4 text-xs text-slate-500">
-                  Based on each profile&apos;s{" "}
-                  <code className="rounded bg-slate-100 px-1">parentReferralCode</code>{" "}
-                  field.
-                </p>
-              </Card>
-            </section>
-
-            <section className="mt-6">
-              <h3 className="mb-4 text-lg font-bold text-slate-900">
-                Levels (unlock structure)
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {LEVEL_TIERS.map((tier, i) => (
-                  <Card
-                    key={tier.level}
-                    className={`text-left ${
-                      levelsUnlocked[i]
-                        ? "border-slate-200 bg-slate-50/60"
-                        : "opacity-75"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold uppercase tracking-wide text-slate-600">
-                        Level {tier.level}
-                      </span>
-                      {levelsUnlocked[i] ? (
-                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-emerald-700">
-                          Unlocked
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase text-slate-500">
-                          Locked
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-2 font-semibold text-slate-900">{tier.title}</p>
-                    <p className="mt-2 text-xs text-slate-600">
-                      Unlock with {tier.unlockDirectRefs}+ directs or{" "}
-                      {tier.unlockPoints}+ effective pts.
-                    </p>
-                  </Card>
-                ))}
-              </div>
-            </section>
-
-            <section className="mt-6">
-              <Card className="bg-white">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 className="text-lg font-bold text-slate-900">
-                    Direct referrals list
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => reload()}
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
-                  >
-                    Refresh
-                  </button>
-                </div>
-                <div className="mt-4 overflow-x-auto">
-                  <table className="w-full min-w-[520px] text-left text-sm">
-                    <thead>
-                      <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
-                        <th className="pb-2 pr-3 font-semibold">Avatar</th>
-                        <th className="pb-2 pr-4 font-semibold">Name</th>
-                        <th className="pb-2 pr-4 font-semibold">Email</th>
-                        <th className="pb-2 pr-4 font-semibold">Their code</th>
-                        <th className="pb-2 font-semibold">Verified</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {loading ? (
-                        <tr>
-                          <td colSpan={5} className="py-6 text-slate-500">
-                            Loading…
-                          </td>
-                        </tr>
-                      ) : referrals.length === 0 ? (
-                        <tr>
-                          <td colSpan={5} className="py-6 text-slate-500">
-                            No direct referrals yet. Share your link:{" "}
-                            <code className="rounded bg-slate-100 px-1 py-0.5 text-xs">
-                              {`/signup?ref=${profile?.referralCode ?? activeCode}`}
-                            </code>
-                          </td>
-                        </tr>
-                      ) : (
-                        referrals.map((r) => (
-                          <tr key={r.id} className="border-b border-slate-100">
-                            <td className="py-3 pr-3 align-middle">
-                              <ProfileGenderAvatar
-                                gender={r.inviteeGender}
-                                size="sm"
-                              />
-                            </td>
-                            <td className="py-3 pr-4 font-medium text-slate-900">
-                              {r.inviteeName}
-                            </td>
-                            <td className="py-3 pr-4 text-slate-600">
-                              {r.inviteeEmail}
-                            </td>
-                            <td className="py-3 pr-4 font-mono text-xs text-slate-700">
-                              {r.inviteeReferralCode}
-                            </td>
-                            <td className="py-3">
-                              {r.verified ? (
-                                <span className="text-emerald-600">Yes</span>
-                              ) : (
-                                <span className="text-amber-600">No</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            </section>
           </>
         ) : null}
       </main>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { ProfileGenderAvatar } from "@/components/profile-gender-avatar";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { PublicProfileAvatar } from "@/components/public-profile-avatar";
 import {
   fetchVerifiedLeaderboard,
   type VerifiedLeaderboardEntry,
@@ -12,20 +12,28 @@ export function VerifiedLeaderboard() {
     null,
   );
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(false);
 
   const load = useCallback(async () => {
+    if (!mountedRef.current) return;
     setError(null);
     try {
       const rows = await fetchVerifiedLeaderboard(10);
+      if (!mountedRef.current) return;
       setEntries(rows);
     } catch {
+      if (!mountedRef.current) return;
       setEntries([]);
       setError("Unable to load leaderboard right now.");
     }
   }, []);
 
   useEffect(() => {
+    mountedRef.current = true;
     void load();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [load]);
 
   const count = entries?.length ?? 0;
@@ -94,7 +102,7 @@ export function VerifiedLeaderboard() {
             <span className="absolute -right-1 -top-1 z-10 flex h-7 min-w-7 items-center justify-center rounded-full bg-blue-600 px-1.5 text-xs font-bold text-white shadow-md ring-2 ring-white">
               {index + 1}
             </span>
-            <ProfileGenderAvatar gender={row.gender} size="card" />
+            <PublicProfileAvatar displayName={row.displayName} gender={row.gender} size="card" />
           </div>
           <p className="mt-4 line-clamp-2 text-sm font-semibold leading-snug text-slate-900">
             {row.displayName}

@@ -360,11 +360,71 @@ export async function fetchDashboardSnapshot(
   };
 }
 
+/** Safe subset for a shareable dashboard-style page (no invitee emails). */
+export type PublicReferralHighlight = {
+  id: string;
+  inviteeName: string;
+  inviteeGender?: string;
+  verified: boolean;
+};
+
+/** Read-only member dashboard data for `/dashboard/[referralCode]` (home Top Leaders links). */
+export async function fetchPublicMemberDashboard(
+  profileReferralCode: string,
+): Promise<{
+  profile: ProfileDoc;
+  effectivePoints: number;
+  rankTitle: string;
+  referrals: PublicReferralHighlight[];
+} | null> {
+  const upper = profileReferralCode.toUpperCase().trim();
+  const raw = await getProfileSnapshot(upper);
+  if (!raw) return null;
+
+  const profileLike: ProfileLike = {
+    pointsTotal: raw.pointsTotal ?? 0,
+    verified: raw.verified ?? false,
+    createdAt: toDate(raw.createdAt as Timestamp | undefined),
+    directReferralsCount: raw.directReferralsCount ?? 0,
+  };
+  const effectivePoints = getEffectiveRewardPoints(profileLike);
+  const rankId = computeRank(profileLike);
+  const rankTitle = rankLabel(rankId);
+
+  const db = getFirebaseDb();
+  const qRef = query(
+    collection(db, "profiles", upper, "receivedReferrals"),
+    orderBy("createdAt", "desc"),
+    limit(24),
+  );
+  const received = await getDocs(qRef);
+  const referrals: PublicReferralHighlight[] = received.docs.map((d) => {
+    const x = d.data();
+    return {
+      id: d.id,
+      inviteeName: String(x.inviteeName ?? "Member"),
+      inviteeGender:
+        typeof x.inviteeGender === "string" ? x.inviteeGender : undefined,
+      verified: Boolean(x.verified),
+    };
+  });
+
+  return { profile: raw, effectivePoints, rankTitle, referrals };
+}
+
 export type VerifiedLeaderboardEntry = {
   referralCode: string;
   displayName: string;
   pointsTotal: number;
   gender?: string;
+};
+
+export type PublicLeaderEntry = {
+  referralCode: string;
+  displayName: string;
+  pointsTotal: number;
+  gender?: string;
+  createdAtMs: number;
 };
 
 /** Public leaderboard: verified profiles only, sorted by lifetime points (desc). */
@@ -386,6 +446,33 @@ export async function fetchVerifiedLeaderboard(
       pointsTotal: Math.max(0, Number(p.pointsTotal) || 0),
       gender: typeof p.gender === "string" ? p.gender : undefined,
     }));
+}
+
+/** Public leaders feed: highest points first (top rated members). */
+export async function fetchPublicLeaders(
+  maxEntries = 10,
+): Promise<PublicLeaderEntry[]> {
+  const db = getFirebaseDb();
+  const snap = await getDocs(collection(db, "profiles"));
+  return snap.docs
+    .map((d) => d.data() as ProfileDoc)
+    .map((p) => {
+      const createdAtMs = (p.createdAt as Timestamp | undefined)?.toMillis?.() ?? 0;
+      return {
+        referralCode: String(p.referralCode ?? ""),
+        displayName: String(
+          (p.displayName || p.username || p.referralCode || "Member").trim(),
+        ),
+        pointsTotal: Math.max(0, Number(p.pointsTotal) || 0),
+        gender: typeof p.gender === "string" ? p.gender : undefined,
+        createdAtMs,
+      };
+    })
+    .sort((a, b) => {
+      if (b.pointsTotal !== a.pointsTotal) return b.pointsTotal - a.pointsTotal;
+      return b.createdAtMs - a.createdAtMs;
+    })
+    .slice(0, maxEntries);
 }
 
 /** Admin: list all profiles (used by `/admin`). */

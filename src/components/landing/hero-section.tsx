@@ -9,6 +9,9 @@ type HeroSectionProps = {
 };
 
 export function HeroSection({ applyHref }: HeroSectionProps) {
+  const whatsappAppointmentHref =
+    "https://wa.me/923020462372?text=Hello%2C%20I%20want%20to%20book%20an%20appointment.";
+
   return (
     <section
       id="hero"
@@ -69,10 +72,10 @@ export function HeroSection({ applyHref }: HeroSectionProps) {
           </ul>
           <div className="mt-9 flex flex-wrap justify-start gap-3">
             <Button
-              href={applyHref}
+              href={whatsappAppointmentHref || applyHref}
               className="bg-none bg-emerald-600 text-white shadow-md hover:bg-emerald-700 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
             >
-              Apply Now
+              Book Appointment
             </Button>
             <Button
               href="#contact"
