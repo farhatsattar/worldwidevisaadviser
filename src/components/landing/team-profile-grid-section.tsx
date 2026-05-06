@@ -4,7 +4,7 @@ import Image from "next/image";
 import { teamProfileMembers } from "@/content/team-profile-grid-data";
 import { Reveal } from "./reveal";
 
-/** Har leader — yellow / red / blue circular background (rotate). */
+/** Each leader uses a rotating yellow/red/blue circular halo. */
 const avatarHalos = [
   "bg-[#F9A826]",
   "bg-red-500",
@@ -39,6 +39,7 @@ export function TeamProfileGridSection() {
                       height={118}
                       className="h-full w-full object-cover object-center"
                       sizes="120px"
+                      unoptimized
                     />
                   </div>
                 </div>

@@ -97,7 +97,7 @@ function ReferralTreeBranch({ node }: { node: ReferralTreeNode }) {
           className="mt-0.5 shrink-0"
         />
         <div className="min-w-0 pt-0.5">
-          <span className="font-mono font-semibold text-blue-700">{node.code}</span>
+          <span className="font-mono font-semibold text-slate-700">{node.code}</span>
           <span className="text-slate-600"> — {node.displayName}</span>
         </div>
       </div>
@@ -334,7 +334,7 @@ export default function DashboardPage() {
               </Card>
               <Card className="bg-white">
                 <p className="text-sm font-medium text-slate-500">Rank</p>
-                <p className="mt-2 text-xl font-bold text-blue-700">
+                <p className="mt-2 text-xl font-bold text-slate-700">
                   {loading ? "…" : rankTitle}
                 </p>
                 <p className="mt-2 text-xs leading-relaxed text-slate-500">
@@ -344,7 +344,7 @@ export default function DashboardPage() {
             </section>
 
             <section className="mt-6">
-              <Card className="border-0 bg-gradient-to-r from-blue-700 to-sky-500 p-7 text-white shadow-lg md:p-10">
+              <Card className="border-0 bg-gradient-to-r from-slate-700 to-slate-500 p-7 text-white shadow-lg md:p-10">
                 <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
                   <div className="flex flex-1 flex-col gap-6 md:flex-row md:items-center">
                     <div className="relative shrink-0" aria-hidden>
@@ -353,26 +353,26 @@ export default function DashboardPage() {
                         size="hero"
                         className="ring-4 ring-white/60 shadow-2xl"
                       />
-                      <span className="absolute -bottom-1 -right-1 flex h-9 min-w-9 items-center justify-center rounded-full bg-white px-2 text-xs font-bold text-blue-800 shadow-lg ring-4 ring-blue-600/20">
+                      <span className="absolute -bottom-1 -right-1 flex h-9 min-w-9 items-center justify-center rounded-full bg-white px-2 text-xs font-bold text-slate-800 shadow-lg ring-4 ring-slate-600/20">
                         {initials}
                       </span>
                     </div>
                     <div className="text-left">
-                      <p className="flex items-center gap-1.5 text-sm text-blue-100">
+                      <p className="flex items-center gap-1.5 text-sm text-slate-100">
                         <IconUser className="h-4 w-4 opacity-90" />
                         Profile
                       </p>
                       <h2 className="text-2xl font-semibold">
                         {loading ? "Loading…" : profile?.displayName ?? "—"}
                       </h2>
-                      <p className="mt-1 text-sm text-blue-100">
+                      <p className="mt-1 text-sm text-slate-100">
                         Username:{" "}
                         <span className="font-medium text-white">
                           @{profile?.username ?? "—"}
                         </span>
                       </p>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="text-sm text-blue-100">
+                        <span className="text-sm text-slate-100">
                           Referral code:
                         </span>
                         <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2 py-1 font-mono text-sm font-semibold text-white ring-1 ring-white/25">
@@ -413,7 +413,7 @@ export default function DashboardPage() {
                         ) : null}
                       </div>
 
-                      <p className="mt-2 text-xs text-blue-100/90">
+                      <p className="mt-2 text-xs text-slate-100/90">
                         Verification:{" "}
                         {profile?.verified ? (
                           <span className="font-semibold text-emerald-200">
@@ -430,25 +430,25 @@ export default function DashboardPage() {
 
                   <div className="flex flex-col gap-6 lg:items-end lg:text-right">
                     <div className="w-full max-w-md lg:ml-auto lg:text-right">
-                      <p className="text-sm text-blue-100">Ranking points</p>
+                      <p className="text-sm text-slate-100">Ranking points</p>
                       <p className="text-4xl font-extrabold tracking-tight md:text-5xl">
                         {loading ? (
                           "…"
                         ) : (
                           <>
                             {rankingTowardCap}
-                            <span className="text-2xl font-semibold text-blue-100/90">
+                            <span className="text-2xl font-semibold text-slate-100/90">
                               {" "}
                               / {MAX_REWARD_POINTS}
                             </span>
                           </>
                         )}
                       </p>
-                      <p className="mt-2 text-xs text-blue-100/85">
+                      <p className="mt-2 text-xs text-slate-100/85">
                         Ranking scale: 0–{MAX_REWARD_POINTS} pts (see milestones
                         below).
                       </p>
-                      <p className="mt-3 text-xs font-medium uppercase tracking-wide text-blue-100">
+                      <p className="mt-3 text-xs font-medium uppercase tracking-wide text-slate-100">
                         Progress (max {MAX_REWARD_POINTS})
                       </p>
                       <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/25">
@@ -553,12 +553,12 @@ export default function DashboardPage() {
                     key={tier.level}
                     className={`text-left ${
                       levelsUnlocked[i]
-                        ? "border-blue-200 bg-blue-50/60"
+                        ? "border-slate-200 bg-slate-50/60"
                         : "opacity-75"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold uppercase tracking-wide text-blue-600">
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-600">
                         Level {tier.level}
                       </span>
                       {levelsUnlocked[i] ? (
@@ -637,7 +637,7 @@ export default function DashboardPage() {
                             <td className="py-3 pr-4 text-slate-600">
                               {r.inviteeEmail}
                             </td>
-                            <td className="py-3 pr-4 font-mono text-xs text-blue-700">
+                            <td className="py-3 pr-4 font-mono text-xs text-slate-700">
                               {r.inviteeReferralCode}
                             </td>
                             <td className="py-3">
